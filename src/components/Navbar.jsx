@@ -56,9 +56,6 @@ function Navbar() {
                 </Link>
               </li>
               <li>
-                <a>Settings</a>
-              </li>
-              <li>
                 <div onClick={handleLogout}>Logout</div>
               </li>
             </ul>

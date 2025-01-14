@@ -6,6 +6,7 @@ import { BACKEND_URL } from "../utils/config";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../redux/userSlice";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Body = () => {
   return (
     <div>
       <Navbar />
+      <Toaster />
       <Outlet />
       <Footer />
     </div>

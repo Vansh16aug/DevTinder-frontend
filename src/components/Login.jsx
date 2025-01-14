@@ -2,8 +2,9 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../utils/config";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const [emailId, setEmailId] = useState("kumarvansh16aug@gmail.com");
@@ -23,8 +24,13 @@ const Login = () => {
       );
       dispatch(addUser(res.data.data));
       navigate("/");
+      toast.success("Login successful");
     } catch (err) {
-      console.log(err.message);
+      if (err?.response?.data) {
+        toast.error(err.response.data);
+      } else {
+        toast.error("An error occurred during login");
+      }
     }
   };
 
@@ -72,6 +78,7 @@ const Login = () => {
       <button className="btn btn-neutral" onClick={handleLogin}>
         Login
       </button>
+      <Link to="/signup">Don&apos;t have account?</Link>
     </div>
   );
 };
