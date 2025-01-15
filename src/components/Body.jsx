@@ -33,17 +33,17 @@ const Body = () => {
       });
       dispatch(addRequest(res?.data?.data));
     } catch (err) {
-      toast.error(err.message);
+      console.log(err.message);
     }
   };
   useEffect(() => {
     fetchUser();
   }, []);
 
-  setInterval(()=>{
+  setInterval(() => {
     fetchRequest();
-  },3000)
-  
+  }, 3000);
+
   return (
     <div>
       <Navbar />
