@@ -6,7 +6,8 @@ import { BACKEND_URL } from "../utils/config";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../redux/userSlice";
 import { useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { addRequest } from "../redux/requestSlice";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -21,15 +22,28 @@ const Body = () => {
       });
       dispatch(addUser(user.data.data));
     } catch (err) {
-      if (err.status === 401) {
-        navigate("/login");
-      }
+      navigate("/login");
       console.log(err.message);
+    }
+  };
+  const fetchRequest = async () => {
+    try {
+      const res = await axios.get(BACKEND_URL + "/user/requests", {
+        withCredentials: true,
+      });
+      dispatch(addRequest(res?.data?.data));
+    } catch (err) {
+      toast.error(err.message);
     }
   };
   useEffect(() => {
     fetchUser();
   }, []);
+
+  setInterval(()=>{
+    fetchRequest();
+  },3000)
+  
   return (
     <div>
       <Navbar />

@@ -8,7 +8,6 @@ import store from "./redux/store";
 import Feed from "./components/Feed";
 import Signup from "./components/Signup";
 import Connections from "./components/Connections";
-import Requests from "./components/Requests";
 
 const App = () => {
   return (
@@ -20,8 +19,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/connections" element={<Connections />} />
-            <Route path="/requests" element={<Requests />} />
+            <Route path="/" element={<Connections />} />
           </Route>
         </Routes>
       </BrowserRouter>
