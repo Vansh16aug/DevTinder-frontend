@@ -23,7 +23,7 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data.data));
-      navigate("/");
+      navigate("/profile");
       toast.success("Login successful");
     } catch (err) {
       if (err?.response?.data) {
