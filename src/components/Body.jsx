@@ -6,7 +6,7 @@ import { BACKEND_URL } from "../utils/config";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../redux/userSlice";
 import { useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { addRequest } from "../redux/requestSlice";
 
 const Body = () => {

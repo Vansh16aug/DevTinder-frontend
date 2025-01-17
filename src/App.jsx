@@ -14,12 +14,14 @@ const App = () => {
     <Provider store={store}>
       <BrowserRouter basename="/">
         <Routes>
+          {/* Top-level route for the main layout */}
           <Route path="/" element={<Body />}>
-            <Route path="/" element={<Feed />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/" element={<Connections />} />
+            {/* Nested routes */}
+            <Route index element={<Feed />} /> {/* Default child route */}
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="connections" element={<Connections />} />
           </Route>
         </Routes>
       </BrowserRouter>
