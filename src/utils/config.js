@@ -1,2 +1,6 @@
-export const BACKEND_URL =
-  location.hostname === "localhost" ? import.meta.env.VITE_BACKEND_URL : "/api";
+// export const BACKEND_URL =
+//   location.hostname === "localhost"
+//     ? "http://localhost:8000"
+//     : import.meta.env.VITE_BACKEND_URL;
+
+export const BACKEND_URL = "https://starfish-app-admwy.ondigitalocean.app";
