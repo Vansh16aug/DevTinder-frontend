@@ -3,8 +3,13 @@ import axios from "axios";
 import { BACKEND_URL } from "../utils/config";
 import { toast } from "react-hot-toast";
 import FeedCard from "./FeedCard";
-import { addUser } from "../redux/userSlice";
-import { useDispatch } from "react-redux";
+import { addUser, removeUser } from "../redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { emptyFeed } from "../redux/feedSlice";
+import { emptyConnection } from "../redux/connectionSlice";
+import { emptyRequest } from "../redux/requestSlice";
+import { useNavigate } from "react-router-dom";
+import { BadgeCheck } from "lucide-react";
 
 const EditProfile = () => {
   const [photoUrl, setPhotoUrl] = useState("");
@@ -15,7 +20,9 @@ const EditProfile = () => {
   const [about, setAbout] = useState("");
   const [skills, setSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProfile();
@@ -36,7 +43,7 @@ const EditProfile = () => {
       setSkills(profileData.skills || []);
       setIsLoading(false);
     } catch (err) {
-      toast.error("Failed to load profile. Please try again.");
+      // toast.error("Failed to load profile. Please try again.");
       setIsLoading(false);
     }
   };
@@ -54,7 +61,6 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
     const updatedProfile = {
       photoUrl,
@@ -66,108 +72,144 @@ const EditProfile = () => {
       skills,
     };
 
-    try {
-      const res = await axios.patch(
-        `${BACKEND_URL}/profile/edit`,
-        updatedProfile,
-        {
+    toast.promise(
+      axios
+        .patch(`${BACKEND_URL}/profile/edit`, updatedProfile, {
           withCredentials: true,
-        }
-      );
+        })
+        .then((res) => {
+          dispatch(addUser(res.data.data));
+          return res;
+        })
+        .catch((error) => {
+          console.error("Profile update error:", error);
+          throw error;
+        }),
+      {
+        loading: "Saving...",
+        success: <b>Profile saved!</b>,
+        error: (err) => <b>{err.response?.data || "Could not save."}</b>,
+      }
+    );
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const res = await axios.delete(`${BACKEND_URL}/profile/delete`, {
+        withCredentials: true,
+      });
       toast.success(res.data.message);
-      dispatch(addUser(res?.data?.data));
-      setIsLoading(false);
+      dispatch(removeUser());
+      dispatch(emptyFeed());
+      dispatch(emptyConnection());
+      dispatch(emptyRequest());
+      navigate("/login");
     } catch (err) {
       toast.error(
-        err.response?.data || "Failed to update profile. Please try again."
+        err.response?.data || "Failed to delete profile. Please try again."
       );
-      setIsLoading(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="h-screen flex justify-center items-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="min-h-screen flex justify-center items-center bg-[#1a1a1a]">
+        <span className="loading loading-spinner loading-lg text-pink-500"></span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-base-200 py-3">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-6 text-center">Profile Preview</h2>
-        <div className="flex flex-col lg:flex-row gap-8">
+    <div className="min-h-screen bg-[#1a1a1a] py-6 text-white overflow-hidden">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <h2 className="text-2xl font-semibold mb-6">Edit Profile</h2>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Form Section */}
           <div className="flex-1">
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-[#242424] shadow-xl">
               <div className="card-body">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="flex flex-col items-center mb-6">
-                    <img
-                      src={photoUrl || "/placeholder.svg"}
-                      alt="profile"
-                      className="rounded-full w-32 h-32 object-cover mb-4"
-                    />
-                    <div className="form-control w-full">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Profile Photo Section */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="avatar relative">
+                      <div className="w-24 rounded-full ring ring-pink-500 ring-offset-base-100 ring-offset-2">
+                        <img
+                          src={photoUrl || "/placeholder.svg"}
+                          alt="profile"
+                        />
+                      </div>
+                      {user?.verified && (
+                        <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
+                          <BadgeCheck size={16} className="text-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-full max-w-md">
                       <label className="label">
-                        <span className="label-text">Photo URL</span>
+                        <span className="label-text text-white">Photo URL</span>
                       </label>
                       <input
                         type="url"
                         value={photoUrl}
                         onChange={handlePhotoUrlChange}
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full bg-[#333333] text-white"
                         placeholder="Enter photo URL"
                       />
                     </div>
                   </div>
+
+                  {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="form-control">
+                    <div>
                       <label className="label">
-                        <span className="label-text">First Name</span>
+                        <span className="label-text text-white">
+                          First Name
+                        </span>
                       </label>
                       <input
                         type="text"
                         value={firstName}
                         onChange={handleFirstNameChange}
-                        className="input input-bordered"
+                        className="input input-bordered w-full bg-[#333333] text-white"
                         required
                       />
                     </div>
-                    <div className="form-control">
+                    <div>
                       <label className="label">
-                        <span className="label-text">Last Name</span>
+                        <span className="label-text text-white">Last Name</span>
                       </label>
                       <input
                         type="text"
                         value={lastName}
                         onChange={handleLastNameChange}
-                        className="input input-bordered"
+                        className="input input-bordered w-full bg-[#333333] text-white"
                         required
                       />
                     </div>
                   </div>
+
+                  {/* Age and Gender */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="form-control">
+                    <div>
                       <label className="label">
-                        <span className="label-text">Age</span>
+                        <span className="label-text text-white">Age</span>
                       </label>
                       <input
                         type="number"
                         value={age}
                         onChange={handleAgeChange}
-                        className="input input-bordered"
+                        className="input input-bordered w-full bg-[#333333] text-white"
                         required
                       />
                     </div>
-                    <div className="form-control">
+                    <div>
                       <label className="label">
-                        <span className="label-text">Gender</span>
+                        <span className="label-text text-white">Gender</span>
                       </label>
                       <select
                         value={gender}
                         onChange={handleGenderChange}
-                        className="select select-bordered"
+                        className="select select-bordered w-full bg-[#333333] text-white"
                         required
                       >
                         <option value="">Select Gender</option>
@@ -177,40 +219,50 @@ const EditProfile = () => {
                       </select>
                     </div>
                   </div>
-                  <div className="form-control">
+
+                  {/* About */}
+                  <div>
                     <label className="label">
-                      <span className="label-text">About</span>
+                      <span className="label-text text-white">About</span>
                     </label>
                     <textarea
                       value={about}
                       onChange={handleAboutChange}
-                      className="textarea textarea-bordered"
-                      rows="3"
+                      className="textarea textarea-bordered w-full min-h-[100px] bg-[#333333] text-white"
+                      placeholder="Tell us about yourself..."
                     ></textarea>
                   </div>
-                  <div className="form-control">
+
+                  {/* Skills */}
+                  <div>
                     <label className="label">
-                      <span className="label-text">
-                        Skills (comma-separated)
-                      </span>
+                      <span className="label-text text-white">Skills</span>
                     </label>
                     <input
                       type="text"
                       value={skills.join(", ")}
                       onChange={handleSkillsChange}
-                      className="input input-bordered"
+                      className="input input-bordered w-full bg-[#333333] text-white"
+                      placeholder="e.g. JavaScript, React, Node.js"
                     />
+                    <label className="label">
+                      <span className="label-text-alt text-gray-400">
+                        Separate skills with commas
+                      </span>
+                    </label>
                   </div>
-                  <div className="form-control mt-6">
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-primary w-full bg-pink-500 hover:bg-pink-600"
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        <span className="loading loading-spinner"></span>
+                        <span className="loading loading-spinner loading-sm"></span>
                       ) : (
-                        "Update Profile"
+                        "Save Changes"
                       )}
                     </button>
                   </div>
@@ -218,8 +270,13 @@ const EditProfile = () => {
               </div>
             </div>
           </div>
-          <div className="flex-1 flex justify-center items-start">
-            <div className="sticky top-8">
+
+          {/* Preview Section */}
+          <div className="lg:min-w-[380px]">
+            <div className="sticky top-6">
+              <h3 className="text-lg font-medium mb-3 text-white">
+                Profile Preview
+              </h3>
               <FeedCard
                 user={{
                   photoUrl,
@@ -234,6 +291,46 @@ const EditProfile = () => {
             </div>
           </div>
         </div>
+
+        {/* Delete Account Button */}
+        <div className="mt-8">
+          <button
+            className="btn btn-error bg-red-500 hover:bg-red-600 text-white"
+            onClick={() =>
+              document.getElementById("delete-account-modal").showModal()
+            }
+          >
+            Delete Account
+          </button>
+        </div>
+
+        {/* Delete Account Modal */}
+        <dialog
+          id="delete-account-modal"
+          className="modal modal-bottom sm:modal-middle"
+        >
+          <form method="dialog" className="modal-box bg-[#242424] text-white">
+            <h3 className="font-bold text-lg">Delete Account</h3>
+            <p className="py-4">
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
+            <div className="modal-action">
+              <button className="btn bg-[#333333] text-white hover:bg-[#444444]">
+                Cancel
+              </button>
+              <button
+                className="btn btn-error bg-red-500 hover:bg-red-600 text-white"
+                onClick={handleDeleteAccount}
+              >
+                Yes, Delete My Account
+              </button>
+            </div>
+          </form>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
     </div>
   );

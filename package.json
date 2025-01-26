@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-spring/web": "^9.5.5",
     "@reduxjs/toolkit": "^2.5.0",
+    "@use-gesture/react": "^10.3.1",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "lucide-react": "^0.471.1",
@@ -18,7 +20,9 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "react-spring": "^9.7.5",
+    "react-tinder-card": "^1.6.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
