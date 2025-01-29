@@ -8,7 +8,7 @@ import Feed from "./components/Feed";
 import AuthPage from "./components/AuthPage";
 import PP from "./components/policypages/PP";
 import TermsAndCondition from "./components/policypages/TermsAndCondition";
-import ContactUs from "./components/contactUs";
+import ContactUs from "./components/ContactUs";
 
 const App = () => {
   return (
