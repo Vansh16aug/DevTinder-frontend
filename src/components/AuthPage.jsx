@@ -48,12 +48,12 @@ const AuthPage = () => {
       const res = await axios.post(`${BACKEND_URL}/login`, loginData, {
         withCredentials: true,
       });
-      dispatch(addUser(res.data.data));
+      dispatch(addUser(res?.data?.data));
       navigate("/");
       toast.success("Login successful");
     } catch (err) {
       if (err?.response?.data) {
-        toast.error(err.response.data);
+        toast.error(err?.response?.data);
       } else {
         toast.error("An error occurred during login");
       }

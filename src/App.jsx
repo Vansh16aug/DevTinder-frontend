@@ -9,6 +9,10 @@ import AuthPage from "./components/AuthPage";
 import PP from "./components/policypages/PP";
 import TermsAndCondition from "./components/policypages/TermsAndCondition";
 import ContactUs from "./components/ContactUs";
+import AboutUs from "./components/policypages/AboutUs";
+import Disclaimer from "./components/policypages/Disclaimer";
+import RefundCancellation from "./components/policypages/RefundCancellation";
+import ShippingDelivery from "./components/policypages/ShippingDelivery";
 
 const App = () => {
   return (
@@ -24,6 +28,10 @@ const App = () => {
             <Route path="privacy-policy" element={<PP />} />
             <Route path="terms" element={<TermsAndCondition />} />
             <Route path="contact" element={<ContactUs />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="disclaimer" element={<Disclaimer />} />
+            <Route path="refund-cancel" element={<RefundCancellation />} />
+            <Route path="shipping" element={<ShippingDelivery />} />
           </Route>
         </Routes>
       </BrowserRouter>

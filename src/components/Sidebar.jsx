@@ -368,6 +368,38 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
+              to="/about-us"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/disclaimer"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Disclaimer
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/refund-cancel"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Refund and Cancellation
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/shipping"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Shipping and Delivery
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/contact"
               className="text-white/60 hover:text-white transition-colors"
             >
