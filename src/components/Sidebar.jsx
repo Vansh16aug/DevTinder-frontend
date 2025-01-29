@@ -104,9 +104,9 @@ const Sidebar = () => {
     }
   };
 
-  // useEffect(() => {
-  //   getConnections();
-  // }, []);
+  useEffect(() => {
+    getConnections();
+  }, []);
 
   const handleAvatarClick = () => {
     if (location.pathname === "/profile") {
