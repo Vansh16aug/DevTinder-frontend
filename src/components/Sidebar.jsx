@@ -348,6 +348,34 @@ const Sidebar = () => {
           </div>
         </div>
       )}
+      <div className="mt-auto p-4 border-t border-white/10">
+        <ul className="space-y-2 text-sm">
+          <li>
+            <Link
+              to="/privacy-policy"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/terms"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Terms of Service
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              Contact Us
+            </Link>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

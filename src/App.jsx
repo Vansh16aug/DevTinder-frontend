@@ -6,6 +6,9 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import Feed from "./components/Feed";
 import AuthPage from "./components/AuthPage";
+import PP from "./components/policypages/PP";
+import TermsAndCondition from "./components/policypages/TermsAndCondition";
+import ContactUs from "./components/contactUs";
 
 const App = () => {
   return (
@@ -18,6 +21,9 @@ const App = () => {
             <Route index element={<Feed />} /> {/* Default child route */}
             <Route path="login" element={<AuthPage />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="privacy-policy" element={<PP />} />
+            <Route path="terms" element={<TermsAndCondition />} />
+            <Route path="contact" element={<ContactUs />} />
           </Route>
         </Routes>
       </BrowserRouter>
