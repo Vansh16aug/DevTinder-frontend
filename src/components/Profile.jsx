@@ -120,16 +120,14 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] py-6 text-white overflow-hidden">
+    <div className="min-h-screen bg-gray-900 py-6 text-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
         <h2 className="text-2xl font-semibold mb-6">Edit Profile</h2>
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Form Section */}
           <div className="flex-1">
-            <div className="card bg-[#242424] shadow-xl">
+            <div className="card bg-gray-800 shadow-xl">
               <div className="card-body">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Profile Photo Section */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="avatar relative">
                       <div className="w-24 rounded-full ring ring-pink-500 ring-offset-base-100 ring-offset-2">
@@ -152,13 +150,12 @@ const EditProfile = () => {
                         type="url"
                         value={photoUrl}
                         onChange={handlePhotoUrlChange}
-                        className="input input-bordered w-full bg-[#333333] text-white"
+                        className="input input-bordered w-full bg-gray-700 text-white"
                         placeholder="Enter photo URL"
                       />
                     </div>
                   </div>
 
-                  {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
@@ -170,7 +167,7 @@ const EditProfile = () => {
                         type="text"
                         value={firstName}
                         onChange={handleFirstNameChange}
-                        className="input input-bordered w-full bg-[#333333] text-white"
+                        className="input input-bordered w-full bg-gray-700 text-white"
                         required
                       />
                     </div>
@@ -182,13 +179,12 @@ const EditProfile = () => {
                         type="text"
                         value={lastName}
                         onChange={handleLastNameChange}
-                        className="input input-bordered w-full bg-[#333333] text-white"
+                        className="input input-bordered w-full bg-gray-700 text-white"
                         required
                       />
                     </div>
                   </div>
 
-                  {/* Age and Gender */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
@@ -198,7 +194,7 @@ const EditProfile = () => {
                         type="number"
                         value={age}
                         onChange={handleAgeChange}
-                        className="input input-bordered w-full bg-[#333333] text-white"
+                        className="input input-bordered w-full bg-gray-700 text-white"
                         required
                       />
                     </div>
@@ -209,7 +205,7 @@ const EditProfile = () => {
                       <select
                         value={gender}
                         onChange={handleGenderChange}
-                        className="select select-bordered w-full bg-[#333333] text-white"
+                        className="select select-bordered w-full bg-gray-700 text-white"
                         required
                       >
                         <option value="">Select Gender</option>
@@ -220,7 +216,6 @@ const EditProfile = () => {
                     </div>
                   </div>
 
-                  {/* About */}
                   <div>
                     <label className="label">
                       <span className="label-text text-white">About</span>
@@ -228,12 +223,11 @@ const EditProfile = () => {
                     <textarea
                       value={about}
                       onChange={handleAboutChange}
-                      className="textarea textarea-bordered w-full min-h-[100px] bg-[#333333] text-white"
+                      className="textarea textarea-bordered w-full min-h-[100px] bg-gray-700 text-white"
                       placeholder="Tell us about yourself..."
                     ></textarea>
                   </div>
 
-                  {/* Skills */}
                   <div>
                     <label className="label">
                       <span className="label-text text-white">Skills</span>
@@ -242,7 +236,7 @@ const EditProfile = () => {
                       type="text"
                       value={skills.join(", ")}
                       onChange={handleSkillsChange}
-                      className="input input-bordered w-full bg-[#333333] text-white"
+                      className="input input-bordered w-full bg-gray-700 text-white"
                       placeholder="e.g. JavaScript, React, Node.js"
                     />
                     <label className="label">
@@ -252,11 +246,10 @@ const EditProfile = () => {
                     </label>
                   </div>
 
-                  {/* Submit Button */}
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="btn btn-primary w-full bg-pink-500 hover:bg-pink-600"
+                      className="btn btn-primary w-full bg-pink-600 hover:bg-pink-700"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -271,7 +264,6 @@ const EditProfile = () => {
             </div>
           </div>
 
-          {/* Preview Section */}
           <div className="lg:min-w-[380px]">
             <div className="sticky top-6">
               <h3 className="text-lg font-medium mb-3 text-white">
@@ -292,10 +284,9 @@ const EditProfile = () => {
           </div>
         </div>
 
-        {/* Delete Account Button */}
         <div className="mt-8">
           <button
-            className="btn btn-error bg-red-500 hover:bg-red-600 text-white"
+            className="btn bg-red-600 hover:bg-red-700 text-white"
             onClick={() =>
               document.getElementById("delete-account-modal").showModal()
             }
@@ -304,23 +295,22 @@ const EditProfile = () => {
           </button>
         </div>
 
-        {/* Delete Account Modal */}
         <dialog
           id="delete-account-modal"
           className="modal modal-bottom sm:modal-middle"
         >
-          <form method="dialog" className="modal-box bg-[#242424] text-white">
+          <form method="dialog" className="modal-box bg-gray-800 text-white">
             <h3 className="font-bold text-lg">Delete Account</h3>
             <p className="py-4">
               Are you sure you want to delete your account? This action cannot
               be undone.
             </p>
             <div className="modal-action">
-              <button className="btn bg-[#333333] text-white hover:bg-[#444444]">
+              <button className="btn bg-gray-700 text-white hover:bg-gray-600">
                 Cancel
               </button>
               <button
-                className="btn btn-error bg-red-500 hover:bg-red-600 text-white"
+                className="btn bg-red-600 hover:bg-red-700 text-white"
                 onClick={handleDeleteAccount}
               >
                 Yes, Delete My Account

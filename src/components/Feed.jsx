@@ -84,7 +84,7 @@ const Feed = () => {
 
   if (!user?.verified) {
     return (
-      <div className="flex h-screen bg-[#1a1a1a]">
+      <div className="flex h-screen bg-gray-900">
         <div className="flex-1 flex justify-center items-center text-pink-500">
           Please complete profile verification to access the feed.
         </div>
@@ -92,9 +92,9 @@ const Feed = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && user?.verified) {
     return (
-      <div className="flex h-screen bg-[#1a1a1a]">
+      <div className="flex h-screen bg-gray-900">
         <div className="flex-1 flex justify-center items-center">
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
         </div>
@@ -124,7 +124,7 @@ const Feed = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#1a1a1a] select-none overflow-hidden">
+    <div className="flex h-screen bg-gray-900 select-none overflow-hidden">
       <main className="flex-1 flex items-center justify-center">
         {feedData?.length > 0 ? (
           <div className="relative h-[calc(100vh-2rem)] aspect-[3/4] max-w-md mx-auto">
@@ -182,13 +182,26 @@ const Feed = () => {
             </div>
           </div>
         ) : (
-          <div className="text-white/60 text-center px-4 max-w-md">
-            <div className="w-64 h-64 mx-auto mb-6 bg-pink-500/20 rounded-xl flex items-center justify-center">
-              <Heart size={64} className="text-pink-500/50" />
+          <div className="text-white/60 text-center px-4 max-w-md animate-fade-in">
+            <div className="relative w-72 h-72 mx-auto mb-8">
+              <div className="absolute inset-0 bg-pink-500/10 rounded-full animate-pulse"></div>
+              <div
+                className="absolute inset-2 bg-pink-500/15 rounded-full animate-pulse"
+                style={{ animationDelay: "200ms" }}
+              ></div>
+              <div className="relative h-full rounded-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 backdrop-blur flex items-center justify-center">
+                <Heart
+                  size={64}
+                  className="text-pink-500/70 animate-bounce"
+                  style={{ animationDuration: "2s" }}
+                />
+              </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Start Matching</h3>
-            <p className="text-sm">
-              No more profiles to show. Check back later!
+            <h3 className="text-2xl font-bold mb-3 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              No More Matches
+            </h3>
+            <p className="text-base text-white/80">
+              Check back later for new matches!
             </p>
           </div>
         )}

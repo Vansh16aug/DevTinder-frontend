@@ -13,6 +13,7 @@ import AboutUs from "./components/policypages/AboutUs";
 import Disclaimer from "./components/policypages/Disclaimer";
 import RefundCancellation from "./components/policypages/RefundCancellation";
 import ShippingDelivery from "./components/policypages/ShippingDelivery";
+import Chat from "./components/Chat";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="terms" element={<TermsAndCondition />} />
             <Route path="contact" element={<ContactUs />} />
             <Route path="about-us" element={<AboutUs />} />
+            <Route path="chat/:targetId" element={<Chat />} />
             <Route path="disclaimer" element={<Disclaimer />} />
             <Route path="refund-cancel" element={<RefundCancellation />} />
             <Route path="shipping" element={<ShippingDelivery />} />

@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
+
 const PP = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl text-white">
-      <a href="/" className="text-white hover:text-gray-300 transition-colors">
+      <Link to="/" className="text-white hover:text-gray-300 transition-colors">
         Back
-      </a>
+      </Link>
       <h1 className="text-3xl font-bold mb-6 text-center">Privacy Policy</h1>
 
       <section className="mb-8">

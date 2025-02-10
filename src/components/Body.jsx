@@ -59,7 +59,7 @@ const Body = () => {
   }, [userData?.verified, userData]);
 
   return (
-    <div className="flex h-screen bg-[#1a1a1a]">
+    <div className="flex h-screen bg-gray-900">
       {userData && <Sidebar />}
       <div className="flex-1 overflow-y-auto">
         <Toaster />

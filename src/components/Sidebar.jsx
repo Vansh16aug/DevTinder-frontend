@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -21,7 +23,6 @@ import {
   Check,
   X,
   MoreVertical,
-  BadgeCheck,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -53,7 +54,7 @@ const Sidebar = () => {
     }
   };
 
-  const getConnections = async () => {
+  const getConnections = useCallback(async () => {
     try {
       const res = await axios.get(BACKEND_URL + "/user/connections", {
         withCredentials: true,
@@ -63,7 +64,7 @@ const Sidebar = () => {
       toast.error(err.response.data.message) ||
         toast.error("Failed to load connections");
     }
-  };
+  }, [dispatch]);
 
   const reviewRequest = async (status, _id) => {
     try {
@@ -90,7 +91,6 @@ const Sidebar = () => {
       );
       dispatch(removeConnection(connectionId));
       toast.success("Connection removed successfully");
-      // await getConnections();
       try {
         const res = await axios.get(BACKEND_URL + "/user/feed", {
           withCredentials: true,
@@ -106,7 +106,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     getConnections();
-  }, []);
+  }, [getConnections]);
 
   const handleAvatarClick = () => {
     if (location.pathname === "/profile") {
@@ -125,7 +125,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-[320px] bg-[#242424] border-r border-white/10 flex flex-col h-screen">
+    <div className="w-[320px] bg-gray-800 border-r border-gray-700 flex flex-col h-screen">
       <div className="p-4 flex items-center justify-between">
         <div className="dropdown dropdown-right">
           <div
@@ -140,11 +140,6 @@ const Sidebar = () => {
                 src={user?.photoUrl || "/placeholder.svg"}
               />
             </div>
-            {/* {user?.verified && (
-              <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
-                <BadgeCheck size={16} className="text-white" />
-              </div>
-            )} */}
           </div>
         </div>
         <div className="text-white">
@@ -155,19 +150,20 @@ const Sidebar = () => {
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center p-2 text-white hover:text-fuchsia-700 transition-all duration-300"
+          className="flex items-center p-2 text-white hover:text-pink-500 transition-all duration-300"
         >
           <LogOut className="w-5 h-6 mr-2" />
         </button>
       </div>
 
       <div className="p-4 flex gap-2">
-        <button
+        <Link
+          to="/"
           onClick={() => setActiveTab("matches")}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors relative ${
             activeTab === "matches"
-              ? "bg-pink-500 text-white"
-              : "text-white/60 hover:text-white hover:bg-white/5"
+              ? "bg-pink-600 text-white"
+              : "text-white/60 hover:text-white hover:bg-gray-700"
           }`}
         >
           <Users size={20} />
@@ -177,13 +173,13 @@ const Sidebar = () => {
               {requests?.length > 99 ? "99+" : requests?.length}
             </span>
           )}
-        </button>
+        </Link>
         <button
           onClick={() => setActiveTab("messages")}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
             activeTab === "messages"
-              ? "bg-pink-500 text-white"
-              : "text-white/60 hover:text-white hover:bg-white/5"
+              ? "bg-pink-600 text-white"
+              : "text-white/60 hover:text-white hover:bg-gray-700"
           }`}
         >
           <MessageSquare size={20} />
@@ -198,7 +194,7 @@ const Sidebar = () => {
               {requests.map((request) => (
                 <li
                   key={request._id}
-                  className="bg-white/5 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 hover:bg-white/10"
+                  className="bg-gray-700 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 hover:bg-gray-600"
                 >
                   <div className="flex-shrink-0">
                     {request.fromUserId?.photoUrl ? (
@@ -252,78 +248,86 @@ const Sidebar = () => {
         ) : connections && connections?.length > 0 ? (
           <ul className="space-y-3">
             {connections.map((connection) => (
-              <li
-                key={connection?.connectionId}
-                className="bg-base-200 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 hover:bg-base-100"
-              >
-                <div className="flex-shrink-0">
-                  {connection?.user?.photoUrl ? (
-                    <img
-                      src={connection?.user?.photoUrl || "/placeholder.svg"}
-                      alt={`${connection.user.firstName} ${connection.user.lastName}`}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-primary"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
-                      <User className="text-primary-content" size={24} />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-grow">
-                  <p className="font-semibold text-base-content">
-                    {`${connection.user.firstName} ${connection.user.lastName}`
-                      .length > 10
-                      ? `${connection.user.firstName} ${connection.user.lastName}`.slice(
-                          0,
-                          10
-                        ) + "..."
-                      : `${connection.user.firstName} ${connection.user.lastName}`}
-                  </p>
-                </div>
-                <div className="dropdown dropdown-end">
-                  <button
-                    tabIndex={0}
-                    className="btn btn-ghost btn-circle btn-sm"
-                    onClick={() => toggleDropdown(connection.connectionId)}
-                  >
-                    <MoreVertical
-                      size={16}
-                      className={
-                        activeDropdown === connection.connectionId
-                          ? "rotate-90"
-                          : ""
-                      }
-                    />
-                  </button>
-                  {activeDropdown === connection.connectionId && (
-                    <ul
+              <li key={connection.connectionId}>
+                <Link
+                  to={`/chat/${connection.user._id}`}
+                  state={{ connectionInfo: connection.user }}
+                  className="bg-gray-700 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 hover:bg-gray-600"
+                >
+                  <div className="flex-shrink-0">
+                    {connection?.user?.photoUrl ? (
+                      <img
+                        src={connection?.user?.photoUrl || "/placeholder.svg"}
+                        alt={`${connection.user.firstName} ${connection.user.lastName}`}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-pink-500"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-pink-500 flex items-center justify-center">
+                        <User className="text-white" size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-grow">
+                    <p className="font-semibold text-white">
+                      {`${connection.user.firstName} ${connection.user.lastName}`
+                        .length > 10
+                        ? `${connection.user.firstName} ${connection.user.lastName}`.slice(
+                            0,
+                            10
+                          ) + "..."
+                        : `${connection.user.firstName} ${connection.user.lastName}`}
+                    </p>
+                  </div>
+                  <div className="dropdown dropdown-end">
+                    <button
                       tabIndex={0}
-                      className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                      className="btn btn-ghost btn-circle btn-sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleDropdown(connection.connectionId);
+                      }}
                     >
-                      <li>
-                        <a
-                          onClick={() => {
-                            console.log("View profile", connection.user._id);
-                            toggleDropdown(connection.connectionId);
-                          }}
-                        >
-                          View Profile
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          onClick={() => {
-                            removeConnectionHandler(connection.connectionId);
-                            toggleDropdown(connection.connectionId);
-                          }}
-                          className="text-error"
-                        >
-                          Delete
-                        </a>
-                      </li>
-                    </ul>
-                  )}
-                </div>
+                      <MoreVertical
+                        size={16}
+                        className={
+                          activeDropdown === connection.connectionId
+                            ? "rotate-90 text-white"
+                            : "text-white"
+                        }
+                      />
+                    </button>
+                    {activeDropdown === connection.connectionId && (
+                      <ul
+                        tabIndex={0}
+                        className="dropdown-content z-[1] menu p-2 text-white shadow bg-gray-700 rounded-box w-52"
+                      >
+                        <li>
+                          <a
+                            onClick={(e) => {
+                              e.preventDefault();
+                              console.log("View profile", connection.user._id);
+                              toggleDropdown(connection.connectionId);
+                            }}
+                          >
+                            View Profile
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeConnectionHandler(connection.connectionId);
+                              toggleDropdown(connection.connectionId);
+                            }}
+                            className="text-red-500"
+                          >
+                            Delete
+                          </a>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -336,7 +340,7 @@ const Sidebar = () => {
 
       {connections?.length === 0 && requests?.length === 0 && (
         <div className="px-4 py-6">
-          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-6 text-center text-white">
+          <div className="bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl p-6 text-center text-white">
             <div className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
               <UserIcon size={32} className="text-white" />
             </div>
@@ -348,64 +352,26 @@ const Sidebar = () => {
           </div>
         </div>
       )}
-      <div className="mt-auto p-4 border-t border-white/10">
+      <div className="mt-auto p-4 border-t border-gray-700">
         <ul className="space-y-2 text-sm">
-          <li>
-            <Link
-              to="/privacy-policy"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/terms"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Terms of Service
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about-us"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              About Us
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/disclaimer"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Disclaimer
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/refund-cancel"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Refund and Cancellation
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/shipping"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Shipping and Delivery
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className="text-white/60 hover:text-white transition-colors"
-            >
-              Contact Us
-            </Link>
-          </li>
+          {[
+            { to: "/privacy-policy", text: "Privacy Policy" },
+            { to: "/terms", text: "Terms of Service" },
+            { to: "/about-us", text: "About Us" },
+            { to: "/disclaimer", text: "Disclaimer" },
+            { to: "/refund-cancel", text: "Refund and Cancellation" },
+            { to: "/shipping", text: "Shipping and Delivery" },
+            { to: "/contact", text: "Contact Us" },
+          ].map((link) => (
+            <li key={link.to}>
+              <Link
+                to={link.to}
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                {link.text}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
