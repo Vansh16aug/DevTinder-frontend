@@ -12,7 +12,8 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isTargetOnline, setIsTargetOnline] = useState(false);
+  const [lastSeen, setLastSeen] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const user = useSelector((store) => store.user);
   const userId = user?._id;
@@ -20,6 +21,7 @@ export default function Chat() {
   const scrollContainerRef = useRef(null);
   const emojiPickerRef = useRef(null);
   const dropdownRef = useRef(null);
+  const socketRef = useRef(null);
   const location = useLocation();
   const connectionInfo = location.state?.connectionInfo;
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ export default function Chat() {
     const chat = await axios.get(BACKEND_URL + "/chat/" + targetId, {
       withCredentials: true,
     });
+    if (!chat?.data?.messages) return;
 
     const chatMessages = chat?.data?.messages.map((msg) => {
       const { senderId, text, createdAt } = msg;
@@ -49,6 +52,11 @@ export default function Chat() {
     if (!userId) return;
 
     const socket = createSocketConnection();
+
+    socketRef.current = socket;
+
+    socket.emit("userOnline", { userId });
+
     socket.emit("joinChat", {
       firstName: user?.firstName,
       userId,
@@ -66,6 +74,15 @@ export default function Chat() {
         },
       ]);
     });
+
+     socket.on("userStatusChanged", ({ userId: changedUserId, status }) => {
+       if (changedUserId === targetId) {
+         setIsTargetOnline(status === "online");
+         if (status === "offline") {
+           setLastSeen(new Date().toISOString());
+         }
+       }
+     });
 
     return () => {
       socket.disconnect();
@@ -174,16 +191,28 @@ export default function Chat() {
     return groupedMessages;
   };
 
-  const formatDateHeader = (date) => {
-    const today = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return date === today ? "Today" : date;
-  };
+const formatDateHeader = (date) => {
+  const today = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  return date === today ? "Today" : date;
+};
 
   const groupedMessages = groupMessagesByDate(messages);
+
+  const formatLastSeen = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMinutes = Math.floor((now - date) / (1000 * 60));
+
+    if (diffMinutes < 1) return "just now";
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
@@ -198,7 +227,7 @@ export default function Chat() {
                   className="w-12 h-12 rounded-full object-cover ring-2 ring-primary ring-offset-2 bg-gray-700"
                   alt={`${connectionInfo?.firstName} ${connectionInfo?.lastName}`}
                 />
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div> */}
               </div>
 
               <div className="flex-1">
@@ -210,7 +239,13 @@ export default function Chat() {
                     {connectionInfo?.emailId}
                   </span>
                   <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-                  <span className="text-sm text-green-500">Online</span>
+                  {isTargetOnline ? (
+                    <span className="text-sm text-green-500">Online</span>
+                  ) : (
+                    <span className="text-sm text-gray-400">
+                      Last seen {formatLastSeen(lastSeen)}
+                    </span>
+                  )}
                 </div>
               </div>
 
